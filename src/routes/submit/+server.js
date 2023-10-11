@@ -1,4 +1,5 @@
 import { json } from '@sveltejs/kit';
+import { error } from '@sveltejs/kit';
 import fetch from 'node-fetch';
 import { createClient } from '@supabase/supabase-js';
 
@@ -17,64 +18,36 @@ const languages = {
 
 /** @type {import('./$types').RequestHandler} */
 export async function POST({ request }) {
-    // console.log("returning preset results")
-    // return json({
-    //     "results": [{
-    //         "testCaseId": 1,
-    //         "status": "FAILED",
-    //         "received": "8",
-    //         "expected": "7",
-    //         "memory": 13892,
-    //         "time": "0.195",
-    //         "error": null
-    //     }, {
-    //         "testCaseId": 2,
-    //         "status": "FAILED",
-    //         "received": "16",
-    //         "expected": "15",
-    //         "memory": 13668,
-    //         "time": "0.185",
-    //         "error": null
-    //     }, {
-    //         "testCaseId": 3,
-    //         "status": "FAILED",
-    //         "received": "38",
-    //         "expected": "37",
-    //         "memory": 13660,
-    //         "time": "0.195",
-    //         "error": null
-    //     }]
-    // });
-
     const { code, language, problemNumber } = await request.json();
-    console.log("REQUEST: " + code + "\nLANG: " + language + "\nPROBNO: " + problemNumber)
 
     // validate problem number
     if (typeof problemNumber !== 'number') {
         if (/^\d+$/.test(problemNumber)) {
             problemNumber = Number(problemNumber);
         } else {
-            return { status: 400, body: { error: 'Invalid problem number'} };
+            throw error(400,'Invalid problem number')
         }
     }
 
     // get test cases from supabase
-    const { data: testCases, error } = await supabase
+    const { data: testCases, err } = await supabase
     .from('test_cases')
     .select('*')
     .eq('problem_number', problemNumber);
 
-    if (error) {
-        return { status: 500, body: { error: 'Failed to fetch test cases: '+ error} };
+    if (testCases.length === 0) {
+        throw error(400, 'No test cases');
     }
-
-    console.log("TEST CASES: " + testCases);
+    
+    if (err) {
+        throw error(500,'Failed to fetch test cases: ' + err);
+    }
 
     const results = [];
 
     const languageId = languages[language];
     if (!languageId) {
-        return { status: 400, body: { error: 'Invalid language'} };
+        throw error(400,'Invalid language')
     }
 
     // test for each test case
@@ -82,12 +55,7 @@ export async function POST({ request }) {
         const input = testCase.input;
         const expectedOutput = testCase.output;
 
-        console.log("checking " + input + "\n expecting " + expectedOutput);
-        console.log("code: " + code);
-        console.log("\n languageId: " + languageId);
-
         // submit to judge0
-        let submissionToken;
         try {
             const createSubmissionResponse = await fetch('https://judge0-ce.p.rapidapi.com/submissions?base64_encoded=true&fields=*&wait=true', {
                 method: 'POST',
@@ -121,8 +89,8 @@ export async function POST({ request }) {
 
             results.push({ testCaseId: testCase.id, status: status, received: decodedOutput.trim(), expected: expectedOutput.trim(), memory: submissionData.memory, time: submissionData.time, error: submissionData.stderr});
 
-        } catch (error) {
-            return { status: 500, body: { error: 'Failed to create submission to Judge0: ' + error } };
+        } catch (err) {
+            throw error(500,'Failed to create submission to Judge0: ' + err);
         }
     }
 
