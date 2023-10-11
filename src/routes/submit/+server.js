@@ -16,7 +16,7 @@ const languages = {
 }
 
 /** @type {import('./$types').RequestHandler} */
-export async function POST(request) {
+export async function POST({ request }) {
     // console.log("returning preset results")
     // return json({
     //     "results": [{
@@ -46,8 +46,7 @@ export async function POST(request) {
     //     }]
     // });
 
-    console.log("recieved: " + request.body)
-    let { code, language, problemNumber } = request.body;
+    const { code, language, problemNumber } = await request.json();
     console.log("REQUEST: " + code + "\nLANG: " + language + "\nPROBNO: " + problemNumber)
 
     // validate problem number

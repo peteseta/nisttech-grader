@@ -49,6 +49,13 @@
 
         const selectedLanguage = languages[ext];
 
+        console.log({
+            code: code,
+            language: selectedLanguage,
+            problemNumber: problemNumber
+        });  // Log the data being sent to the server
+
+
         const response = await fetch("/submit", {
             method: "POST",
             headers: {
