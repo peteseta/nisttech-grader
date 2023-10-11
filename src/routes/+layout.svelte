@@ -5,8 +5,8 @@
     let path;
     $: path = $page.url.pathname;
 
-    let activeClass = "block py-2 pr-4 pl-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 md:dark:text-blue-500";
-    let inactiveClass = "block py-2 pr-4 pl-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700";
+    let activeClass = "block py-2 pr-4 pl-3 text-white bg-slate-700 rounded md:bg-transparent md:text-slate-500 md:p-0 md:dark:text-slate-500";
+    let inactiveClass = "block py-2 pr-4 pl-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-slate-700 md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700";
 </script>
 
 <nav class="top-0 left-0 z-20 w-full bg-white border-b border-slate-200 dark:bg-gray-900 dark:border-gray-600">
