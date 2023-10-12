@@ -3,7 +3,8 @@
     export let isLoading;
     export let hasSubmitted;
     export let problemNumber;
-    export let passedTests;
+    export let points;
+    export let maxPoints;
 
     // isLoading = true;
     // hasSubmitted = true;
@@ -45,7 +46,7 @@
                 <p class="h-6 w-6 animate-spin rounded-full border-4 border-slate-700 border-current border-r-transparent motion-reduce:animate-[spin_1.5s_linear_infinite]" role="status" />
             </div>
         {:else if results}
-            {#each results.results as result}
+            {#each results as result}
                 <div class="flex flex-col p-4 rounded-md border border-slate-300 text-slate-700">
                     <div class={result.status === 'PASSED' ? 'font-bold text-green-600' : 'font-bold text-red-600'}>
                         test case id {result.testCaseId}: {result.status.charAt(0).toUpperCase() + result.status.slice(1).toLowerCase()}
@@ -59,7 +60,7 @@
                 </div>
             {/each}
 
-            <h3 class="mt-2 font-semibold text-slate-700">total score for problem {problemNumber}: {passedTests}/{results.results.length}</h3>
+            <h3 class="p-1 mt-2 font-semibold text-slate-700">total score: {points}/{maxPoints}</h3>
         {/if}
     </div>
 {/if}

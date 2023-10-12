@@ -1,5 +1,4 @@
 import { json } from "@sveltejs/kit";
-import { error } from "@sveltejs/kit";
 import { createClient } from "@supabase/supabase-js";
 
 const supabaseUrl = "https://ekkdqhznzdyxjgablgfm.supabase.co";
@@ -17,19 +16,17 @@ export async function POST({ request }) {
         });
     
         if (err) {
-            throw error(500, "Failed to login: " + err.message);
+            throw new Error(500, "Failed to login: " + err.message);
         }
-    
-        request.locals.session.userId = data.user.id;
+
         return json({ user: data.user });
         
     } catch (error) {
-        if (err.body && typeof err.body.message === 'string') {
-            throw error(500, "Failed to login: " + err.body.message);
+        if (error.body && typeof error.body.message === 'string') {
+            throw new Error(500, "Failed to login: " + err.body.message);
         } else {
-            console.error(err);
-            throw error(500, "Failed to login: Unexpected error.");
+            console.error(error);
+            throw new Error(500, "Failed to login: Unexpected error.");
         }
     }
-    
 }

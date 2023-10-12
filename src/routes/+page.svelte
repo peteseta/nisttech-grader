@@ -1,15 +1,23 @@
-<script>    
+<script>   
+    import { user } from '../stores/user.js';
     import Form from '../lib/form.svelte';
     import Results from '../lib/results.svelte';
 
-    let name = "";
-    let email = "";
     let problemNumber;
     let file;
     let results = null;
     let isLoading = false;
     let hasSubmitted = false;
-    $: passedTests = results?.results.filter(result => result.status === "PASSED").length || 0;
+    let points = 0;
+    let maxPoints = 0;
+    $: width = hasSubmitted ? "md:w-1/2" : "mx-auto max-w-md";
+
+    let currentUser = { name: null, email: null, userId: null };
+
+    // Subscribe to the user store
+    user.subscribe(value => {
+        currentUser = value;
+    });
 
     const handleSubmit = async () => {  
         isLoading = true;
@@ -28,23 +36,25 @@
 
         const selectedLanguage = languages[ext];
 
-        let userId = localStorage.getItem('userId');
-
         const response = await fetch("/submit", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                userId: userId,
+                userId: currentUser.userId,
                 code: code,
                 language: selectedLanguage,
                 problemNumber: problemNumber
             })
         });
         if (response.ok) {
-            const results = await response.json();
-            console.log(results);
+            let data = await response.json();
+            results = data.results;
+            points = data.points;
+            maxPoints = data.maxPoints;
+
+            console.log(data);
         } else {
             // Handle HTTP error responses here
             const { error } = await response.json();
@@ -67,7 +77,16 @@
 
 <slot />
 
-<div class="flex flex-col m-6 space-y-6 md:space-y-0 max-w-screen md:max-w-6xl md:space-x-6 md:flex-row">
-    <Form bind:name bind:email bind:problemNumber bind:file {handleSubmit} />
-    <Results {results} {isLoading} {hasSubmitted} {problemNumber} {passedTests} />
-</div>
+{#if currentUser.name && currentUser.email && currentUser.userId}
+    <div class="flex flex-col m-6 space-y-6 md:space-y-0 md:space-x-6 md:flex-row">
+        <Form bind:problemNumber bind:file {handleSubmit} {width}/>
+        <Results {results} {isLoading} {hasSubmitted} {problemNumber} {points} {maxPoints} />
+    </div>
+{:else}
+    <div class="flex justify-center items-center m-20 min-h-4xl">
+        <div class="p-4 text-white bg-gray-400 rounded-md">
+            <p class="text-center">You are not logged in.</p>
+            <a href="/auth" class="block mt-2 text-center underline">Click here to register or login.</a>
+        </div>
+    </div>
+{/if}

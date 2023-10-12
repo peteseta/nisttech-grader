@@ -20,6 +20,11 @@ const languages = {
 export async function POST({ request }) {
   const { userId, code, language, problemNumber } = await request.json();
 
+  // check if user id is valid
+  if (!userId) {
+    throw new Error(400, "Invalid user id");
+  }
+
   // get problem data from supabase, check if problem number is valid
   let maxPoints
   try {
@@ -86,6 +91,8 @@ export async function POST({ request }) {
       const submissionData = await createSubmissionResponse.json();
       console.log(submissionData);
 
+      // TODO: fix error handling - when something doesn't compile/syntax errors, it just returns 500.
+      // we want to show these errors to the user.
       let status;
       if (submissionData.status.id === 3) {
         status = "PASSED";
@@ -128,7 +135,7 @@ export async function POST({ request }) {
   // calculate score based on number of test cases passed
   const passedTests = results.filter(result => result.status === "PASSED").length;
   const totalTests = results.length;
-  const points = (passedTests / totalTests) * maxPoints;
+  const points = parseFloat(((passedTests / totalTests) * maxPoints).toFixed(2));
 
   // calculate avg memory and runtime usage
   const avgMemory = parseFloat((results.reduce((acc, result) => acc + result.memory, 0) / results.length).toFixed(2));
@@ -164,7 +171,8 @@ export async function POST({ request }) {
     }
 
     // return the individual test case results to client
-    return json({ results });
+    return json({ results, points, maxPoints });
+
   } catch (error) {
     console.log(error)
     throw new Error(500, "Failed to insert submission: " + error.message);
