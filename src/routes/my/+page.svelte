@@ -17,6 +17,7 @@
         // TODO: get all submissions that are by user.userId.
         // show points etc for each.
         // show total points for user
+        // don't forget, since this is sveltekit we do database stuff in /src/routes/my/+page.server.js. see docs.
     </div>
 {:else}
     <div class="flex justify-center items-center m-20 min-h-4xl">
