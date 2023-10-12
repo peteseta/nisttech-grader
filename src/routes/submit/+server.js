@@ -76,6 +76,11 @@ export async function POST({ request }) {
         },
       );
 
+      if (!createSubmissionResponse.ok) {
+        // handle HTTP error responses here, this will catch 4xx and 5xx errors
+        throw error(createSubmissionResponse.status, "Failed to create submission to Judge0: HTTP error.");
+      }
+
       const submissionData = await createSubmissionResponse.json();
       console.log(submissionData);
 
@@ -104,9 +109,17 @@ export async function POST({ request }) {
         time: submissionData.time,
         error: submissionData.stderr,
       });
+
     } catch (err) {
-      throw error(500, "Failed to create submission to Judge0: " + err);
-    }
+        // Check if err.body and err.body.message exist and are strings
+        if (err.body && typeof err.body.message === 'string') {
+            let decodedError = Buffer.from(err.body.message, 'base64').toString();
+            throw error(500, "Failed to create submission to Judge0: " + decodedError);
+        } else {
+            console.error(err);
+            throw error(500, "Failed to create submission to Judge0: Unexpected error format.");
+        }
+    }    
   }
 
   return json({ results });

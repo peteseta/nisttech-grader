@@ -86,7 +86,7 @@
 
 <slot />
 
-<div class="flex flex-row m-6 space-x-6 max-w-6xl">
+<div class="flex flex-col m-6 space-y-6 md:space-y-0 max-w-screen md:max-w-6xl md:space-x-6 md:flex-row">
     <Form bind:name bind:email bind:problemNumber bind:file {handleSubmit} />
     <Results {results} {isLoading} {hasSubmitted} {problemNumber} {passedTests} />
 </div>

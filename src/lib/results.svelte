@@ -5,6 +5,7 @@
     export let problemNumber;
     export let passedTests;
 
+    // isLoading = true;
     // hasSubmitted = true;
     // results = {
     //     "results": [{
@@ -36,12 +37,12 @@
 </script>
 
 {#if hasSubmitted}
-    <div class="flex flex-col p-6 space-y-4 w-1/2 rounded-lg border bg-slate-100 border-slate-300 items-left">
+    <div class="flex flex-col p-6 space-y-4 rounded-lg border md:w-1/2 bg-slate-100 border-slate-300 items-left">
         <h2 class="m-1 text-xl font-bold text-slate-700">your results for problem {problemNumber}</h2>
 
         {#if isLoading}
-            <div class="h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent motion-reduce:animate-[spin_1.5s_linear_infinite]" role="status">
-                <span class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">Loading...</span>
+            <div class="p-1">
+                <p class="h-6 w-6 animate-spin rounded-full border-4 border-slate-700 border-current border-r-transparent motion-reduce:animate-[spin_1.5s_linear_infinite]" role="status" />
             </div>
         {:else if results}
             {#each results.results as result}
@@ -49,8 +50,10 @@
                     <div class={result.status === 'PASSED' ? 'font-bold text-green-600' : 'font-bold text-red-600'}>
                         test case id {result.testCaseId}: {result.status.charAt(0).toUpperCase() + result.status.slice(1).toLowerCase()}
                     </div >
-                    received output: {result.received}<br>
-                    expected output: {result.expected}<br>
+                    {#if result.testCaseID === 'PASSED'}
+                        received output: {result.received}<br>
+                        expected output: {result.expected}<br>
+                    {/if}
                     memory usage: {result.memory}<br>
                     time taken: {result.time}s<br>
                 </div>
