@@ -18,7 +18,7 @@ const languages = {
 
 /** @type {import('./$types').RequestHandler} */
 export async function POST({ request }) {
-  const { code, language, problemNumber } = await request.json();
+  const { userId, code, language, problemNumber } = await request.json();
 
   // validate problem number
   if (typeof problemNumber !== "number") {
@@ -121,6 +121,8 @@ export async function POST({ request }) {
         }
     }    
   }
+
+  // unpack data and store to supabase database
 
   return json({ results });
 }

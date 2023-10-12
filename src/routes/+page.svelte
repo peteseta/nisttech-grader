@@ -12,32 +12,26 @@
     $: passedTests = results?.results.filter(result => result.status === "PASSED").length || 0;
 
     const handleSubmit = async () => {  
-        console.log("handleSubmit function entered.");
-        console.log("Files:", file);
+        if (!name || name.length === 0 || !email || email.length === 0 || !problemNumber || problemNumber.length === 0) {
+            alert('Please complete all forms!');
+            return;
+        }
 
         if (!file || file.length === 0) {
-            alert('Please select a solution file to submit.');
+            alert('Please select a solution file to submit!');
             return;
         }
 
         isLoading = true;
         hasSubmitted = true;
 
-        const actualFile = file[0];
-        console.log("Actual File:", actualFile);
-
-        if (!actualFile || !actualFile.name) {
+        if (!file[0] || !file[0].name) {
             console.error("File or file name is undefined.");
             return;
         }
 
-        const code = await readFile(actualFile);
-        
-        console.log("File Name:", actualFile.name);
-        const fileNameParts = actualFile.name.split('.');
-        console.log("File Name Parts:", fileNameParts);
-        const ext = fileNameParts.pop();
-        console.log("Extracted Extension:", ext);
+        const code = await readFile(file[0]);
+        const ext = file[0].name.split('.').pop();
 
         let languages = {
             "py": "python",

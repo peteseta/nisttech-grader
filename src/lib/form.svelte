@@ -12,8 +12,8 @@
         <input type="text" bind:value={name} placeholder="full name" class="p-3 w-full rounded-md border" />
         <input type="email" bind:value={email} placeholder="email" class="p-3 w-full rounded-md border" />
         <input type="number" bind:value={problemNumber} placeholder="problem number" class="p-3 w-full rounded-md border" />
-        <input type="file" bind:files={file} class="p-3 w-full rounded-md border" />
-        <button type="submit" class="px-4 py-4 font-bold rounded-md text-slate-700 bg-slate-300 hover:bg-slate-500 hover:text-white">
+        <input type="file" bind:files={file} accept=".py,.c,.cpp,.java,.js" placeholder="Upload solution file (.py, .c, .cpp, .java, .js)" class="p-4 w-full rounded-md border" />
+        <button type="submit" class="px-4 py-4 font-bold text-white bg-orange-400 rounded-md hover:bg-orange-500 hover:text-orange-100">
             submit solution
         </button>
     </form>
