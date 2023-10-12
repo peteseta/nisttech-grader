@@ -26,7 +26,7 @@ export async function POST({ request }) {
   }
 
   // get problem data from supabase, check if problem number is valid
-  let maxPoints
+  let maxPoints;
   try {
     const result = await supabase
       .from("problems")
@@ -36,7 +36,7 @@ export async function POST({ request }) {
   } catch (error) {
     throw new Error(400, "Failed to fetch problem info: " + error);
   }
-  
+
   // get test cases from supabase
   let testCases;
   try {
@@ -85,7 +85,10 @@ export async function POST({ request }) {
 
       if (!createSubmissionResponse.ok) {
         // handle HTTP error responses here, this will catch 4xx and 5xx errors
-        throw error(createSubmissionResponse.status, "Failed to create submission to Judge0: HTTP error.");
+        throw error(
+          createSubmissionResponse.status,
+          "Failed to create submission to Judge0: HTTP error.",
+        );
       }
 
       const submissionData = await createSubmissionResponse.json();
@@ -119,41 +122,55 @@ export async function POST({ request }) {
         time: submissionData.time,
         error: submissionData.stderr,
       });
-
     } catch (err) {
-        // Check if err.body and err.body.message exist and are strings
-        if (err.body && typeof err.body.message === 'string') {
-            let decodedError = Buffer.from(err.body.message, 'base64').toString();
-            throw new Error(500, "Failed to create submission to Judge0: " + decodedError);
-        } else {
-            console.error(err);
-            throw new Error(500, "Failed to create submission to Judge0: Unexpected error format.");
-        }
-    }    
+      // Check if err.body and err.body.message exist and are strings
+      if (err.body && typeof err.body.message === "string") {
+        let decodedError = Buffer.from(err.body.message, "base64").toString();
+        throw new Error(
+          500,
+          "Failed to create submission to Judge0: " + decodedError,
+        );
+      } else {
+        console.error(err);
+        throw new Error(
+          500,
+          "Failed to create submission to Judge0: Unexpected error format.",
+        );
+      }
+    }
   }
 
   // calculate score based on number of test cases passed
-  const passedTests = results.filter(result => result.status === "PASSED").length;
+  const passedTests =
+    results.filter((result) => result.status === "PASSED").length;
   const totalTests = results.length;
-  const points = parseFloat(((passedTests / totalTests) * maxPoints).toFixed(2));
+  const points = parseFloat(
+    ((passedTests / totalTests) * maxPoints).toFixed(2),
+  );
 
   // calculate avg memory and runtime usage
-  const avgMemory = parseFloat((results.reduce((acc, result) => acc + result.memory, 0) / results.length).toFixed(2));
-  const avgTime = parseFloat((results.reduce((acc, result) => acc + parseFloat(result.time), 0) / results.length).toFixed(2));
+  const avgMemory = parseFloat(
+    (results.reduce((acc, result) => acc + result.memory, 0) / results.length)
+      .toFixed(2),
+  );
+  const avgTime = parseFloat(
+    (results.reduce((acc, result) => acc + parseFloat(result.time), 0) /
+      results.length).toFixed(2),
+  );
 
-  console.log({           
+  console.log({
     user_id: userId,
     points: points,
     memory: avgMemory,
     runtime: avgTime,
     log: JSON.stringify(results),
-    problem_no: problemNumber
-  })
+    problem_no: problemNumber,
+  });
 
   // store submission into supabase
   try {
     const { _response, error } = await supabase
-      .from('submissions')
+      .from("submissions")
       .insert([
         {
           user_id: userId,
@@ -161,20 +178,19 @@ export async function POST({ request }) {
           memory: avgMemory,
           runtime: avgTime,
           log: JSON.stringify(results),
-          problem_no: problemNumber
+          problem_no: problemNumber,
         },
       ]);
 
     if (error) {
-      console.log(error)
+      console.log(error);
       throw new Error(500, "Failed to insert submission: " + error.message);
     }
 
     // return the individual test case results to client
     return json({ results, points, maxPoints });
-
   } catch (error) {
-    console.log(error)
+    console.log(error);
     throw new Error(500, "Failed to insert submission: " + error.message);
   }
 }
