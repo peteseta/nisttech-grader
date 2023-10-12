@@ -12,23 +12,8 @@
     $: passedTests = results?.results.filter(result => result.status === "PASSED").length || 0;
 
     const handleSubmit = async () => {  
-        if (!name || name.length === 0 || !email || email.length === 0 || !problemNumber || problemNumber.length === 0) {
-            alert('Please complete all forms!');
-            return;
-        }
-
-        if (!file || file.length === 0) {
-            alert('Please select a solution file to submit!');
-            return;
-        }
-
         isLoading = true;
         hasSubmitted = true;
-
-        if (!file[0] || !file[0].name) {
-            console.error("File or file name is undefined.");
-            return;
-        }
 
         const code = await readFile(file[0]);
         const ext = file[0].name.split('.').pop();
@@ -43,12 +28,7 @@
 
         const selectedLanguage = languages[ext];
 
-        console.log({
-            code: code,
-            language: selectedLanguage,
-            problemNumber: problemNumber
-        });  // Log the data being sent to the server
-
+        let userId = localStorage.getItem('userId');
 
         const response = await fetch("/submit", {
             method: "POST",
@@ -56,14 +36,21 @@
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
+                userId: userId,
                 code: code,
                 language: selectedLanguage,
                 problemNumber: problemNumber
             })
         });
+        if (response.ok) {
+            const results = await response.json();
+            console.log(results);
+        } else {
+            // Handle HTTP error responses here
+            const { error } = await response.json();
+            console.error(error);
+        }
 
-        results = await response.json();
-        console.log(results)
         isLoading = false;
     };
 

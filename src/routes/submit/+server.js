@@ -20,35 +20,37 @@ const languages = {
 export async function POST({ request }) {
   const { userId, code, language, problemNumber } = await request.json();
 
-  // validate problem number
-  if (typeof problemNumber !== "number") {
-    if (/^\d+$/.test(problemNumber)) {
-      problemNumber = Number(problemNumber);
-    } else {
-      throw error(400, "Invalid problem number");
-    }
+  // get problem data from supabase, check if problem number is valid
+  let maxPoints
+  try {
+    const result = await supabase
+      .from("problems")
+      .select("*")
+      .eq("problem_no", problemNumber);
+    maxPoints = result.data[0].points;
+  } catch (error) {
+    throw new Error(400, "Failed to fetch problem info: " + error);
   }
-
+  
   // get test cases from supabase
-  const { data: testCases, err } = await supabase
-    .from("test_cases")
-    .select("*")
-    .eq("problem_number", problemNumber);
-
-  if (testCases.length === 0) {
-    throw error(400, "No test cases");
+  let testCases;
+  try {
+    const result = await supabase
+      .from("test_cases")
+      .select("*")
+      .eq("problem_no", problemNumber);
+    testCases = result.data;
+  } catch (error) {
+    throw error(500, "Failed to fetch test cases: " + error);
   }
 
-  if (err) {
-    throw error(500, "Failed to fetch test cases: " + err);
-  }
-
-  const results = [];
-
+  // get lagnuageId for Judge0 from dict
   const languageId = languages[language];
   if (!languageId) {
     throw error(400, "Invalid language");
   }
+
+  const results = [];
 
   // test for each test case
   for (const testCase of testCases) {
@@ -99,6 +101,7 @@ export async function POST({ request }) {
         throw error(500, "Runtime Error: " + submissionData.stderr);
       }
 
+      // store test case results
       results.push({
         testCaseId: testCase.id,
         status: status,
@@ -114,15 +117,56 @@ export async function POST({ request }) {
         // Check if err.body and err.body.message exist and are strings
         if (err.body && typeof err.body.message === 'string') {
             let decodedError = Buffer.from(err.body.message, 'base64').toString();
-            throw error(500, "Failed to create submission to Judge0: " + decodedError);
+            throw new Error(500, "Failed to create submission to Judge0: " + decodedError);
         } else {
             console.error(err);
-            throw error(500, "Failed to create submission to Judge0: Unexpected error format.");
+            throw new Error(500, "Failed to create submission to Judge0: Unexpected error format.");
         }
     }    
   }
 
-  // unpack data and store to supabase database
+  // calculate score based on number of test cases passed
+  const passedTests = results.filter(result => result.status === "PASSED").length;
+  const totalTests = results.length;
+  const points = (passedTests / totalTests) * maxPoints;
 
-  return json({ results });
+  // calculate avg memory and runtime usage
+  const avgMemory = parseFloat((results.reduce((acc, result) => acc + result.memory, 0) / results.length).toFixed(2));
+  const avgTime = parseFloat((results.reduce((acc, result) => acc + parseFloat(result.time), 0) / results.length).toFixed(2));
+
+  console.log({           
+    user_id: userId,
+    points: points,
+    memory: avgMemory,
+    runtime: avgTime,
+    log: JSON.stringify(results),
+    problem_no: problemNumber
+  })
+
+  // store submission into supabase
+  try {
+    const { _response, error } = await supabase
+      .from('submissions')
+      .insert([
+        {
+          user_id: userId,
+          points: points,
+          memory: avgMemory,
+          runtime: avgTime,
+          log: JSON.stringify(results),
+          problem_no: problemNumber
+        },
+      ]);
+
+    if (error) {
+      console.log(error)
+      throw new Error(500, "Failed to insert submission: " + error.message);
+    }
+
+    // return the individual test case results to client
+    return json({ results });
+  } catch (error) {
+    console.log(error)
+    throw new Error(500, "Failed to insert submission: " + error.message);
+  }
 }

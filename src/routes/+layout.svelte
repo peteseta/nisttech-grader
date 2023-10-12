@@ -10,7 +10,7 @@
 </script>
 
 <nav class="top-0 left-0 z-20 w-full bg-white border-b border-slate-20">
-    <div class="flex items-center p-4 mx-auto space-x-5">
+    <div class="flex justify-between items-center p-4 mx-auto space-x-5">
 
         <a href="/">
             <img src="/logo.png" class="h-12" alt="nistTech Logo">
@@ -23,6 +23,14 @@
                 </li>
                 <li>
                 <a href="/leaderboard" class={path === '/leaderboard' ? activeClass : inactiveClass}>Leaderboard</a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="flex p-4">
+            <ul class="flex">
+                <li>
+                    <a href="/auth" class={path === '/auth' ? activeClass : inactiveClass}>Register/Login</a>
                 </li>
             </ul>
         </div>
