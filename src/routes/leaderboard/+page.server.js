@@ -5,10 +5,10 @@ const supabaseKey = process.env.SUPABASE_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 export async function load() {
-    const { data } = await supabase
+  const { data } = await supabase
     .from("leaderboard")
     .select();
-    return {
-        submissions: data ?? [],
-    };
-  }
+  return {
+    submissions: data ?? [],
+  };
+}

@@ -145,7 +145,7 @@ export async function POST({ request }) {
     results.filter((result) => result.status === "PASSED").length;
   const totalTests = results.length;
   const points = parseFloat(
-    ((passedTests / totalTests) * maxPoints).toFixed(2),
+    ((passedTests / totalTests) * maxPoints).toFixed(1),
   );
 
   // calculate avg memory and runtime usage

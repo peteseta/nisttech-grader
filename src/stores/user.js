@@ -16,5 +16,6 @@ user.subscribe((value) => {
   if (browser) {
     // use localStorage only if the code is running in the browser
     localStorage.setItem("user", JSON.stringify(value));
+    // console.log("user changed:", value)
   }
 });
