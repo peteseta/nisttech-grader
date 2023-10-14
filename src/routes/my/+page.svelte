@@ -8,16 +8,41 @@
         currentUser = value;
     });
 
+    export let data
+    console.log(data)
 </script>
 
 <slot />
 
 {#if currentUser.name && currentUser.email && currentUser.userId}
     <div class="flex flex-col m-6 space-y-6 md:space-y-0 md:space-x-6 md:flex-row">
-        // TODO: get all submissions that are by user.userId.
-        // show points etc for each.
-        // show total points for user
-        // don't forget, since this is sveltekit we do database stuff in /src/routes/my/+page.server.js. see docs.
+        <table class="table-fixed">
+            <thead>
+              <tr>
+                <th>Username</th>
+                <th>Time Submitted</th>
+                <th>Memory Usage (MiB)</th>
+                <th>Runtime (s)</th>
+                <th>Problem Number</th>
+                <th>Points Recieved</th>
+              </tr>
+            </thead>
+            <tbody>
+            {#each data.submissions as submission}
+                {#if submission.user_name == currentUser.name}
+                    <tr>
+                        <td>{submission.user_name}</td>
+                        <td>{submission.submitted_at}</td>
+                        <td>{submission.memory}</td>
+                        <td>{submission.runtime}</td>
+                        <td>{submission.problem_no}</td>
+                        <td>{submission.points}</td>
+                    </tr>
+                {/if}
+            {/each}
+
+            </tbody>
+          </table>
     </div>
 {:else}
     <div class="flex justify-center items-center m-20 min-h-4xl">
