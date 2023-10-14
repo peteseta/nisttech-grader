@@ -24,7 +24,8 @@
     <div class="flex justify-between items-center p-4 mx-auto space-x-5">
 
         <a href="/">
-            <img src="/logo.png" class="h-14" alt="nistTech Logo">
+            <img src="/logo.png" class="hidden h-14 md:block" alt="nistTech Logo">
+            <img src="/logo_square.png" class="h-14 md:hidden" alt="nistTech Logo">
         </a>
 
         <div class="flex items-center w-auto" id="navbar-sticky">
