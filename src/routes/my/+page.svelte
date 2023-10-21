@@ -44,7 +44,7 @@
         otherSubmissions = null;
     }
 
-    // console.log("otherSubmissions", otherSubmissions);
+    console.log("otherSubmissions", otherSubmissions);
     
     return { ...problem, highestScoringSubmission, otherSubmissions };  
     });
@@ -98,25 +98,31 @@
 
             <div class="mb-4">
                 <h3 class="mb-2 text-lg font-medium">OTHER SUBMISSIONS</h3>
-                {#each problem.otherSubmissions as submission}
-                    <div class="p-4 mb-2 rounded border-2 border-gray-300">
-                        <div class="grid grid-cols-3 gap-4">
-                            <div>
-                                <div class="text-sm font-medium text-gray-600">Points</div>
-                                <div class="text-lg">{submission.points}/10</div>
-                            </div>
-                            <div>
-                                <div class="text-sm font-medium text-gray-600">Memory</div>
-                                <div class="text-lg">{(problem.highestScoringSubmission.memory/1000).toFixed(1)} MB</div>
-                            </div>
-                            <div>
-                                <div class="text-sm font-medium text-gray-600">Runtime</div>
-                                <div class="text-lg">{submission.runtime}s</div>
-                            </div>
-                        </div>
-                        <p class="mt-2 text-gray-600">Submitted at {formatDate(submission.submitted_at)}</p>
-                    </div>
-                {/each}
+                <div class="container flex flex-col items-center mx-auto my-6">
+                    {#each problemsWithUserSubmissions as problem}
+                        {#if problem.otherSubmissions}
+                            {#each problem.otherSubmissions as otherSubmissions}
+                                <div class="p-4 mb-2 rounded border-2 border-gray-300">
+                                    <div class="grid grid-cols-3 gap-4">
+                                        <div>
+                                            <div class="text-sm font-medium text-gray-600">Points</div>
+                                            <div class="text-lg">{otherSubmissions.points}/10</div>
+                                        </div>
+                                        <div>
+                                            <div class="text-sm font-medium text-gray-600">Memory</div>
+                                            <div class="text-lg">{(otherSubmissions.memory/1000).toFixed(1)} MB</div>
+                                        </div>
+                                        <div>
+                                            <div class="text-sm font-medium text-gray-600">Runtime</div>
+                                            <div class="text-lg">{otherSubmissions.runtime}s</div>
+                                        </div>
+                                    </div>
+                                    <p class="mt-2 text-gray-600">Submitted at {formatDate(otherSubmissions.submitted_at)}</p>
+                                </div>
+                            {/each}
+                        {/if}
+                    {/each}
+                </div>
             </div>
         {:else}
             <div class="text-lg">No submissions yet.</div>
