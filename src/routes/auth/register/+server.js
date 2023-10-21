@@ -11,7 +11,7 @@ export async function POST({ request }) {
   const { name, email, password, school } = await request.json();
 
   try {
-    console.log(name, email, password, school);
+    // console.log(name, email, password, school);
     const { user, err } = await supabase.auth.signUp({
       email,
       password,
