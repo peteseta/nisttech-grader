@@ -18,6 +18,7 @@
     );
 
     // console.log("userSubmissions", userSubmissions);
+    // console.log("problems", problems)
 
     let highestScoringSubmission;
     if (userSubmissions.length > 0) {
@@ -44,9 +45,9 @@
         otherSubmissions = null;
     }
 
-    console.log("otherSubmissions", otherSubmissions);
+    // console.log("otherSubmissions", otherSubmissions);
     
-    return { ...problem, highestScoringSubmission, otherSubmissions };  
+    return { ...problems, highestScoringSubmission, otherSubmissions };  
     });
 
     // console.log("user's name", currentUser.name);
@@ -73,15 +74,15 @@
     <div class="container flex flex-col items-center mx-auto my-6">
     {#each problemsWithUserSubmissions as problem}
         <div class="p-4 mb-6 w-full max-w-lg rounded-lg border-2 border-slate-300">
-            <h2 class="mb-4 text-xl font-bold">Problem {problem.problem_no}</h2>
-            {#if problem.highestScoringSubmission}
+        {#if problem.highestScoringSubmission}
+            <h2 class="mb-4 text-xl font-bold">Problem {problem.highestScoringSubmission.problem_no}</h2>
             <h3 class="mb-2 text-lg font-medium text-slate-500">HIGHEST SCORING</h3>
             <div class="p-4 mb-4 rounded bg-slate-200">
                 <div class="p-4 rounded border-2 border-slate-600">
                     <div class="grid grid-cols-3 gap-4">
                         <div>
                             <div class="text-sm font-medium text-gray-600">Points</div>
-                            <div class="text-lg">{problem.highestScoringSubmission.points}/10</div>
+                            <div class="text-lg">{problem.highestScoringSubmission.points}/{problems[problem.highestScoringSubmission.problem_no].points}</div>
                         </div>
                         <div>
                             <div class="text-sm font-medium text-gray-600">Memory</div>
@@ -106,7 +107,7 @@
                                     <div class="grid grid-cols-3 gap-4">
                                         <div>
                                             <div class="text-sm font-medium text-gray-600">Points</div>
-                                            <div class="text-lg">{otherSubmissions.points}/10</div>
+                                            <div class="text-lg">{otherSubmissions.points}/{problems[otherSubmissions.problem_no].points}</div>
                                         </div>
                                         <div>
                                             <div class="text-sm font-medium text-gray-600">Memory</div>

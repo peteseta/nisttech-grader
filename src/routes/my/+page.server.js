@@ -7,7 +7,8 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 export async function load() {
   const { data: submissionsData } = await supabase.from("past_submissions")
     .select();
-  const { data: problemsData } = await supabase.from("problems").select();
+  const { data: problemsData } = await supabase.from("problems")
+    .select();
 
 //   console.log("finished querying:", submissionsData, problemsData)
 
