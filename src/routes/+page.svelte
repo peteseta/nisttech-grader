@@ -82,7 +82,7 @@
 <slot />
 
 {#if currentUser.name && currentUser.email && currentUser.userId}
-    <div class="flex flex-col m-6 space-y-6 md:space-y-0 md:space-x-6 md:flex-row">
+    <div class="flex flex-col m-6 space-y-6 md:space-y-0 md:space-x-4 md:flex-row">
         <Form bind:problemNumber bind:file {handleSubmit} {width}/>
         <Results {results} {isLoading} {hasSubmitted} {submittedProblemNumber} {points} {maxPoints} />
     </div>

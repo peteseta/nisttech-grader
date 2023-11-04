@@ -2,6 +2,7 @@ import { json } from "@sveltejs/kit";
 import { error } from "@sveltejs/kit";
 import fetch from "node-fetch";
 import { createClient } from "@supabase/supabase-js";
+import { private_env } from "../../../node_modules/@sveltejs/kit/src/runtime/shared-server.js";
 
 const rapidapiKey = process.env.RAPIDAPI_KEY;
 const supabaseUrl = "https://ekkdqhznzdyxjgablgfm.supabase.co";
@@ -92,40 +93,43 @@ export async function POST({ request }) {
       }
 
       const submissionData = await createSubmissionResponse.json();
-      console.log(submissionData);
+      console.log("submissionData from judge0:");
+      console.log(submissionData)
 
       // TODO: fix error handling - when something doesn't compile/syntax errors, it just returns 500.
       // we want to show these errors to the user.
       let status;
       if (submissionData.status.id === 3) {
-        status = "PASSED";
+        status = "Passed";
       } else if (submissionData.status.id === 4) {
-        status = "FAILED";
+        status = "Failed";
       } else if (submissionData.status.id === 5) {
-        throw error(408, "Time limit exceeded.");
+        status = "Time limit exceeded";
       } else if (submissionData.status.id === 6) {
-        throw error(422, "Compilation error.");
+        status = "Compilation error";
       } else if (
         submissionData.status.id >= 7 && submissionData.status.id <= 12
       ) {
-        throw error(500, "Runtime Error: " + submissionData.stderr);
+        status = "Runtime error";
       }
 
       // store test case results
       results.push({
         testCaseId: testCase.id,
         status: status,
-        received: Buffer.from(submissionData.stdout, "base64").toString()
-          .trim(),
+        input: input,
+        received: submissionData.stdout ? Buffer.from(submissionData.stdout, "base64").toString().trim() : null,
         expected: expectedOutput.trim(),
         memory: submissionData.memory,
         time: submissionData.time,
-        error: submissionData.stderr,
+        error: submissionData.stderr ? Buffer.from(submissionData.stderr, "base64").toString().trim() : null,
       });
+
     } catch (err) {
       // Check if err.body and err.body.message exist and are strings
       if (err.body && typeof err.body.message === "string") {
         let decodedError = Buffer.from(err.body.message, "base64").toString();
+        console.error(decodedError)
         throw new Error(
           500,
           "Failed to create submission to Judge0: " + decodedError,
@@ -142,7 +146,7 @@ export async function POST({ request }) {
 
   // calculate score based on number of test cases passed
   const passedTests =
-    results.filter((result) => result.status === "PASSED").length;
+    results.filter((result) => result.status === "Passed").length;
   const totalTests = results.length;
   const points = parseFloat(
     ((passedTests / totalTests) * maxPoints).toFixed(1),
