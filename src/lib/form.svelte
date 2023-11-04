@@ -6,7 +6,7 @@
 </script>
 
 <div class="flex flex-col space-y-4 rounded-lg {width} items-left">
-    <div class="p-4 text-lg font-bold bg-gradient-to-r from-orange-100 to-orange-200 rounded-md shadow-sm text-slate-900">
+    <div class="p-4 text-lg font-bold bg-gradient-to-r rounded-md shadow-sm from-slate-100 to-slate-200 text-slate-900">
         <p>→ submit a new attempt</p>
     </div>
 

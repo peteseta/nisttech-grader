@@ -70,10 +70,10 @@
 {#if currentUser.name && currentUser.email && currentUser.userId}
     <div class="container flex flex-col items-center mx-auto my-6 space-y-4">
         {#each problemsWithUserSubmissions as problem}
-            <div class="flex flex-col p-4 space-y-4 w-full max-w-lg rounded-lg">
+            <div class="flex flex-col w-full max-w-lg rounded-lg">
                 {#if problem.highestScoringSubmission}
                     <!-- highest scoring submission -->
-                    <div class="flex flex-col p-4 space-y-4 bg-gradient-to-r from-pink-100 to-pink-200 rounded-md shadow-sm text-slate-900">
+                    <div class="flex flex-col p-4 my-4 space-y-4 bg-gradient-to-r from-pink-100 to-pink-200 rounded-md shadow-sm text-slate-900">
                         
                         <!-- problem no and points earned -->
                         <div class="flex flex-row text-lg font-bold">
