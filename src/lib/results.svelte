@@ -2,7 +2,7 @@
     export let results;
     export let isLoading;
     export let hasSubmitted;
-    export let problemNumber;
+    export let submittedProblemNumber;
     export let points;
     export let maxPoints;
 
@@ -39,7 +39,7 @@
 
 {#if hasSubmitted}
     <div class="flex flex-col p-6 space-y-4 rounded-lg border md:w-1/2 bg-slate-100 border-slate-300 items-left">
-        <h2 class="m-1 text-xl font-bold text-slate-700">your results for problem {problemNumber}</h2>
+        <h2 class="m-1 text-xl font-bold text-slate-700">your results for problem {submittedProblemNumber}</h2>
 
         {#if isLoading}
             <div class="p-1">

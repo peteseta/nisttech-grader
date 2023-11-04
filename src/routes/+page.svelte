@@ -4,9 +4,11 @@
     import Results from '../lib/results.svelte';
 
     let problemNumber;
+    let submittedProblemNumber;
     let file;
     let results = null;
     let isLoading = false;
+    let isError = false;
     let hasSubmitted = false;
     let points = 0;
     let maxPoints = 0;
@@ -20,6 +22,7 @@
     });
 
     const handleSubmit = async () => {  
+        submittedProblemNumber = problemNumber;
         isLoading = true;
         hasSubmitted = true;
 
@@ -54,11 +57,12 @@
             points = data.points;
             maxPoints = data.maxPoints;
 
-            console.log(data);
+            // console.log(data);
         } else {
             // Handle HTTP error responses here
             const { error } = await response.json();
             console.error(error);
+            isError = true;
         }
 
         isLoading = false;
@@ -80,7 +84,7 @@
 {#if currentUser.name && currentUser.email && currentUser.userId}
     <div class="flex flex-col m-6 space-y-6 md:space-y-0 md:space-x-6 md:flex-row">
         <Form bind:problemNumber bind:file {handleSubmit} {width}/>
-        <Results {results} {isLoading} {hasSubmitted} {problemNumber} {points} {maxPoints} />
+        <Results {results} {isLoading} {hasSubmitted} {submittedProblemNumber} {points} {maxPoints} />
     </div>
 {:else}
     <div class="flex justify-center items-center m-20 min-h-4xl">
