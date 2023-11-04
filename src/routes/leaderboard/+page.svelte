@@ -1,29 +1,38 @@
 <script>
     export let data;
     export let data_length = Object.keys(data.submissions).length;
+
+    function getRowColor(index) {
+        if(index === 0) return 'bg-orange-100';
+        if(index === 1) return 'bg-slate-100';
+        if(index === 2) return 'bg-purple-100';
+        return 'text-slate-800';
+    }
 </script>
 
-<div class="flex justify-center m-6 md:space-y-0 md:space-x-6 md:flex-row">
-    <table class="w-screen table-auto md:max-w-3xl">
-        <thead>
-            <tr class="text-center">
-                <th class="px-4 py-2 font-bold">Place</th>
-                <th class="px-4 py-2 font-bold">Name</th>
-                <th class="px-4 py-2">School</th>
-                <th class="px-4 py-2">Score</th>
-            </tr>
-        </thead>
-        <tbody>
-            {#each {length: data_length} as _, i}
-                <tr class="{i == 0 ? 'text-orange-300' : i == 1 ? 'text-slate-500' : i == 2 ? 'text-orange-700' : 'text-gray-900'} text-center">
-                    <td class="px-4 py-2 font-semibold border">{i + 1}</td>
-                    <td class="px-4 py-2 font-semibold border">{data.submissions[i].user_name}</td>
-                    <td class="px-4 py-2 text-sm font-semibold border">{data.submissions[i].school}</td>
-                    <td class="px-4 py-2 text-sm font-semibold border">{data.submissions[i].total_points} points</td>
+<div class="flex flex-col m-6">
+    <div class="overflow-hidden rounded-md border">
+        <table class="min-w-full divide-y divide-slate-200">
+            <thead class="bg-slate-50">
+                <tr>
+                    <th scope="col" class="px-6 py-3 text-xs font-medium text-left uppercase text-slate-500">Place</th>
+                    <th scope="col" class="px-6 py-3 text-xs font-medium text-left uppercase text-slate-500">Name</th>
+                    <th scope="col" class="px-6 py-3 text-xs font-medium text-left uppercase text-slate-500">School</th>
+                    <th scope="col" class="px-6 py-3 text-xs font-medium text-right uppercase text-slate-500">Score</th>
                 </tr>
-            {/each}
-        </tbody>
-    </table>
+            </thead>
+            <tbody class="divide-y divide-slate-200">
+                {#each {length: data_length} as _, i}
+                    <tr class="{getRowColor(i)}">
+                        <td class="px-6 py-4 text-sm font-medium whitespace-nowrap">{i + 1}</td>
+                        <td class="px-6 py-4 text-sm font-medium whitespace-nowrap">{data.submissions[i].user_name}</td>
+                        <td class="px-6 py-4 text-sm whitespace-nowrap">{data.submissions[i].school}</td>
+                        <td class="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">{data.submissions[i].total_points} points</td>
+                    </tr>
+                {/each}
+            </tbody>
+        </table>
+    </div>
 </div>
 
 <!-- TODO: Can also add a section for the problem breakdown. like for each problem, how many people solved it, how many people attempted it, etc. -->
