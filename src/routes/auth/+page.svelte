@@ -60,17 +60,25 @@
             body: JSON.stringify({ email, password })
         });
 
+        console.log(res);
+
         if (res.ok) {
             // Login successful
             const { user: loggedInUser } = await res.json();
-            // console.log('User logged in:', loggedInUser);
+            console.log('User logged in:', loggedInUser);
 
             // store in svelte store
-            user.set({
+            if (loggedInUser != null) {
+                user.set({
                 name: loggedInUser.user_metadata.name,
                 email: loggedInUser.email,
                 userId: loggedInUser.id
-            });
+                });
+            }
+            else {
+                error = "Wrong password or email";
+                return
+            }
         } else {
             // Login failed
             const { error: loginError } = await res.json();
