@@ -10,6 +10,7 @@
     }
 </script>
 
+<h3 style="text-align: center;" class="px-6 py-3 text-m font-medium text-left uppercase text-slate-500">Top 20 Competitors</h3>
 <div class="flex flex-col m-6">
     <div class="overflow-hidden rounded-md border">
         <table class="min-w-full divide-y divide-slate-200">
