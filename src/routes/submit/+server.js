@@ -2,7 +2,7 @@ import { json } from "@sveltejs/kit";
 import { error } from "@sveltejs/kit";
 import fetch from "node-fetch";
 import { createClient } from "@supabase/supabase-js";
-import { private_env } from "@sveltejs/kit/src/runtime/shared-server.js";
+import { private_env } from "../../../node_modules/@sveltejs/kit/src/runtime/shared-server.js";
 
 const rapidapiKey = process.env.RAPIDAPI_KEY;
 const supabaseUrl = "https://ekkdqhznzdyxjgablgfm.supabase.co";
@@ -17,7 +17,7 @@ const languages = {
   "js": 93, // Node.js 18.15.0
 };
 
-/** @type {import('./$types.js').RequestHandler} */
+/** @type {import('./$types').RequestHandler} */
 export async function POST({ request }) {
   const { userId, code, language, problemNumber } = await request.json();
 
